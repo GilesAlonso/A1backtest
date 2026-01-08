@@ -201,11 +201,7 @@ class OHLCVisualization {
     let candleWidth = 12; // Default reasonable width
 
     if (data.length > 1) {
-      // Get pixel distance between first two consecutive dates
-      const xScale = d3.scaleTime()
-        .domain(d3.extent(data, d => d.date))
-        .range([0, this.chartWidth]);
-      
+      // Get pixel distance between first two consecutive dates using existing xScale
       const firstDatePixel = xScale(data[0].date);
       const secondDatePixel = xScale(data[1].date);
       const pixelsBetweenDates = Math.abs(secondDatePixel - firstDatePixel);
