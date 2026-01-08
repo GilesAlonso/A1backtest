@@ -5,7 +5,6 @@
   <title>OHLC EdgeFinder Visualizer</title>
   <script src="https://www.gstatic.com/charts/loader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       margin: 0;
@@ -67,6 +66,10 @@
       border-radius: 50%;
       display: inline-block;
     }
+    /* Add favicon to prevent 404 error */
+    .favicon {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -109,65 +112,75 @@
     <div id="chart-container"></div>
   </div>
 
-  <script src="https://www.gstatic.com/charts/loader.js"></script>
   <script>
-    google.charts.load('current', {'packages':['corechart']});
-    
+    // This is the fix - we're creating a proper Looker Studio data structure for standalone mode
+    function createMockLookerData() {
+      return {
+        tables: [{
+          columns: [
+            {name: 'date'},
+            {name: 'open'},
+            {name: 'high'},
+            {name: 'low'},
+            {name: 'close'},
+            {name: 'score'},
+            {name: 'ticker'}
+          ],
+          rows: [
+            ['2024-01-01', '100', '105', '98', '103', '3', 'AAPL'],
+            ['2024-01-02', '103', '108', '102', '107', '6', 'AAPL'],
+            ['2024-01-03', '107', '110', '105', '106', '-3', 'AAPL'],
+            ['2024-01-04', '106', '109', '104', '108', '-6', 'AAPL'],
+            ['2024-01-05', '108', '112', '107', '111', '4', 'AAPL'],
+            ['2024-01-06', '111', '115', '110', '114', '7', 'AAPL'],
+            ['2024-01-07', '114', '116', '112', '113', '-2', 'AAPL'],
+            ['2024-01-08', '113', '118', '112', '117', '-7', 'AAPL']
+          ]
+        }]
+      };
+    }
+
     // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
+      let visualization = null;
+      
       // Theme toggle functionality
       document.querySelectorAll('.theme-btn').forEach(btn => {
         btn.addEventListener('click', function() {
           document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
           this.classList.add('active');
           const theme = this.getAttribute('data-theme');
-          applyTheme(theme);
-          redrawChart();
+          if (visualization) {
+            visualization.setTheme(theme);
+          }
         });
       });
       
       // MA toggle functionality
       document.querySelectorAll('input[type="checkbox"][id^="ma"]').forEach(checkbox => {
-        checkbox.addEventListener('change', redrawChart);
+        checkbox.addEventListener('change', function() {
+          if (visualization) {
+            visualization.draw(createMockLookerData());
+          }
+        });
       });
       
-      // Initial draw
-      drawInitialChart();
+      // Initialize visualization
+      visualization = new OHLCVisualization();
+      
+      // Draw the chart with mock data
+      visualization.draw(createMockLookerData());
+      
+      // Handle window resize
+      window.addEventListener('resize', function() {
+        if (visualization) {
+          visualization.updateSize(
+            document.getElementById('chart-container').offsetWidth,
+            document.getElementById('chart-container').offsetHeight || 500
+          );
+        }
+      });
     });
-    
-    function drawInitialChart() {
-      // This will be replaced by the Looker Studio data
-      const sampleData = [
-        {date: new Date('2024-01-01'), open: 100, high: 105, low: 98, close: 103, score: 3},
-        {date: new Date('2024-01-02'), open: 103, high: 108, low: 102, close: 107, score: 6},
-        {date: new Date('2024-01-03'), open: 107, high: 110, low: 105, close: 106, score: -3},
-        {date: new Date('2024-01-04'), open: 106, high: 109, low: 104, close: 108, score: -6},
-        {date: new Date('2024-01-05'), open: 108, high: 112, low: 107, close: 111, score: 4},
-        {date: new Date('2024-01-06'), open: 111, high: 115, low: 110, close: 114, score: 7},
-        {date: new Date('2024-01-07'), open: 114, high: 116, low: 112, close: 113, score: -2},
-        {date: new Date('2024-01-08'), open: 113, high: 118, low: 112, close: 117, score: -7}
-      ];
-      
-      renderChart(sampleData);
-    }
-    
-    function redrawChart() {
-      // In real implementation, this would fetch data from Looker Studio
-      drawInitialChart();
-    }
-    
-    function applyTheme(theme) {
-      document.documentElement.style.setProperty('--bg-color', theme === 'dark' ? '#1e1e1e' : '#ffffff');
-      document.documentElement.style.setProperty('--text-color', theme === 'dark' ? '#ffffff' : '#333333');
-      document.documentElement.style.setProperty('--grid-color', theme === 'dark' ? '#444444' : '#e0e0e0');
-      document.documentElement.style.setProperty('--panel-bg', theme === 'dark' ? '#2d2d2d' : '#f5f5f5');
-      
-      document.body.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-color');
-      document.body.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
-    }
-    
-    // Initial theme setup
-    applyTheme('light');
   </script>
   <script src="visualization.js"></script>
 </body>
