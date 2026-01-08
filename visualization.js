@@ -92,14 +92,17 @@ class OHLCVisualization {
   // Calculate moving averages
   calculateMovingAverages(data) {
     const periods = [3, 14, 20, 50, 100, 200];
-    const result = { ...data };
+    const result = [...data]; // Create a copy
     
     periods.forEach(period => {
-      result[`ma${period}`] = data.map((d, i) => {
-        if (i < period - 1) return null;
+      result.forEach((d, i) => {
+        if (i < period - 1) {
+          d[`ma${period}`] = null;
+          return;
+        }
         
         const sum = data.slice(i - period + 1, i + 1).reduce((acc, curr) => acc + curr.close, 0);
-        return sum / period;
+        d[`ma${period}`] = sum / period;
       });
     });
     
@@ -152,8 +155,8 @@ class OHLCVisualization {
       .range([0, this.chartWidth]);
     
     const priceDomain = [
-      d3.min(data, d => Math.min(d.low, d[`ma3`]?.filter(v => v !== null)[0] || Infinity)),
-      d3.max(data, d => Math.max(d.high, d[`ma200`]?.filter(v => v !== null)[0] || -Infinity))
+      d3.min(data, d => Math.min(d.low, d.ma3 || d.ma14 || d.ma20 || d.ma50 || d.ma100 || d.ma200 || d.low)),
+      d3.max(data, d => Math.max(d.high, d.ma3 || d.ma14 || d.ma20 || d.ma50 || d.ma100 || d.ma200 || d.high))
     ];
     
     const yScale = d3.scaleLinear()
@@ -231,11 +234,12 @@ class OHLCVisualization {
     // Draw moving averages (with toggle functionality)
     const maPeriods = [3, 14, 20, 50, 100, 200];
     maPeriods.forEach(period => {
-      const maKey = `ma${period}`;
-      const maData = data.map((d, i) => ({
-        date: d.date,
-        value: d[maKey]?.[i] || null
-      })).filter(d => d.value !== null);
+      const maData = data
+        .map((d, i) => ({
+          date: d.date,
+          value: d[`ma${period}`]
+        }))
+        .filter(d => d.value !== null);
       
       if (maData.length > 0 && document.getElementById(`ma${period}`)?.checked) {
         const line = d3.line()
@@ -343,6 +347,9 @@ class OHLCVisualization {
       // Detect signals
       const finalData = this.detectSignalArrows(dataWithMAs);
       
+      // Store current data for resize
+      this.currentData = finalData;
+      
       // Render chart
       this.renderChart(finalData);
       
@@ -385,7 +392,6 @@ class OHLCVisualization {
 
 // Initialize the visualization
 let visualization;
-let dsccLoaded = false;
 
 // Looker Studio Community Visualization API
 function setupLookerStudio() {
@@ -393,8 +399,6 @@ function setupLookerStudio() {
     console.log('Running in development mode');
     return;
   }
-  
-  dsccLoaded = true;
   
   // Subscribe to data changes
   dscc.subscribeToData(data => {
