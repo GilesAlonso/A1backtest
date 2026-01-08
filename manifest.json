@@ -1,80 +1,41 @@
 {
-  "name": "OHLC EdgeFinder Visualizer",
-  "organization": "Your Organization",
-  "description": "Interactive OHLC candlestick chart with EdgeFinder scoring, signal arrows, and moving averages",
-  "logoUrl": "https://via.placeholder.com/100x100/3498db/ffffff?text=OHLC",
-  "companyLogoUrl": "https://via.placeholder.com/100x100/2c3e50/ffffff?text=Your+Org",
-  "organizationUrl": "https://yourorganization.com",
-  "privacyPolicyUrl": "https://yourorganization.com/privacy",
-  "termsOfServiceUrl": "https://yourorganization.com/terms",
-  "supportUrl": "https://yourorganization.com/support",
-  "docsUrl": "https://yourorganization.com/docs",
-  "sourceUrl": "https://github.com/yourusername/ohlc-edgefinder",
-  "version": "1.0.0",
-  "defaultTheme": "light",
-  "config": {
-    "requiredFields": [
-      "date",
-      "open",
-      "high",
-      "low",
-      "close",
-      "ticker",
-      "score"
-    ],
-    "options": [
-      {
-        "id": "theme",
-        "displayName": "Theme",
-        "type": "SELECT_SINGLE",
-        "defaultValue": "light",
-        "allowedValues": [
-          {"value": "light", "label": "Light Theme"},
-          {"value": "dark", "label": "Dark Theme"}
-        ]
-      },
-      {
-        "id": "ma3_enabled",
-        "displayName": "Show 3-Day MA",
-        "type": "CHECKBOX",
-        "defaultValue": true
-      },
-      {
-        "id": "ma14_enabled",
-        "displayName": "Show 14-Day MA",
-        "type": "CHECKBOX",
-        "defaultValue": false
-      },
-      {
-        "id": "ma20_enabled",
-        "displayName": "Show 20-Day MA",
-        "type": "CHECKBOX",
-        "defaultValue": true
-      },
-      {
-        "id": "ma50_enabled",
-        "displayName": "Show 50-Day MA",
-        "type": "CHECKBOX",
-        "defaultValue": true
-      },
-      {
-        "id": "ma100_enabled",
-        "displayName": "Show 100-Day MA",
-        "type": "CHECKBOX",
-        "defaultValue": false
-      },
-      {
-        "id": "ma200_enabled",
-        "displayName": "Show 200-Day MA",
-        "type": "CHECKBOX",
-        "defaultValue": true
-      },
-      {
-        "id": "chartHeight",
-        "displayName": "Chart Height",
-        "type": "NUMBER",
-        "defaultValue": 500
-      }
-    ]
+ "name": "App",
+ "icons": [
+  {
+   "src": "\/android-icon-36x36.png",
+   "sizes": "36x36",
+   "type": "image\/png",
+   "density": "0.75"
+  },
+  {
+   "src": "\/android-icon-48x48.png",
+   "sizes": "48x48",
+   "type": "image\/png",
+   "density": "1.0"
+  },
+  {
+   "src": "\/android-icon-72x72.png",
+   "sizes": "72x72",
+   "type": "image\/png",
+   "density": "1.5"
+  },
+  {
+   "src": "\/android-icon-96x96.png",
+   "sizes": "96x96",
+   "type": "image\/png",
+   "density": "2.0"
+  },
+  {
+   "src": "\/android-icon-144x144.png",
+   "sizes": "144x144",
+   "type": "image\/png",
+   "density": "3.0"
+  },
+  {
+   "src": "\/android-icon-192x192.png",
+   "sizes": "192x192",
+   "type": "image\/png",
+   "density": "4.0"
   }
+ ]
 }
