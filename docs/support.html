@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Support - OHLC EdgeFinder</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6; }
+        .hero { text-align: center; padding: 30px 0; background: #f8f9fa; border-radius: 8px; margin-bottom: 30px; }
+        .btn {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        .btn:hover { background: #0056b3; }
+        .btn-issue { background: #28a745; }
+        .btn-issue:hover { background: #218838; }
+        .section { margin: 30px 0; }
+        .faq-item { margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 4px; }
+        .status { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-left: 10px; }
+        .status-working { background: #28a745; color: white; }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>OHLC EdgeFinder Support</h1>
+        <p>Get help with installation, configuration, and troubleshooting</p>
+        <a href="https://github.com/solvethis/A1backtest/issues/new?template=bug_report.md" class="btn btn-issue">Report a Bug</a>
+        <a href="https://github.com/solvethis/A1backtest/issues/new?template=feature_request.md" class="btn">Request a Feature</a>
+    </div>
+
+    <div class="section">
+        <h2>📊 Current Status</h2>
+        <p>All systems operational <span class="status status-working">WORKING</span></p>
+        <p>Last updated: January 8, 2026</p>
+    </div>
+
+    <div class="section">
+        <h2>📚 Documentation & Resources</h2>
+        <ul>
+            <li><a href="https://solvethis.qzz.io/A1backtest/docs/">User Documentation</a> - Setup guide and configuration options</li>
+            <li><a href="https://github.com/solvethis/A1backtest/wiki">GitHub Wiki</a> - Technical details and development roadmap</li>
+            <li><a href="https://github.com/solvethis/A1backtest/discussions">Community Discussions</a> - Ask questions and share insights</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>❓ Frequently Asked Questions</h2>
+        
+        <div class="faq-item">
+            <h3>How do I connect my data source?</h3>
+            <p>Your data source must contain these exact fields: Date, Open, High, Low, Close, Score, and Ticker. The Score field must be numeric with values typically between -10 and 10.</p>
+        </div>
+        
+        <div class="faq-item">
+            <h3>Why aren't the signal arrows appearing?</h3>
+            <p>Signal arrows only appear when the Score field crosses specific thresholds: Bullish arrows when crossing from below 5 to above 5, Bearish arrows when crossing from above -5 to below -5. Check your Score values and date range.</p>
+        </div>
+        
+        <div class="faq-item">
+            <h3>How do I customize colors or themes?</h3>
+            <p>Use the Theme dropdown in the visualization configuration panel to switch between Light and Dark themes. Moving average colors are fixed but can be toggled on/off individually.</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🐛 Bug Reporting Guidelines</h2>
+        <p>When reporting bugs, please include:</p>
+        <ul>
+            <li>Screenshot of the issue</li>
+            <li>Your browser and version</li>
+            <li>Sample of your data structure (hide sensitive data)</li>
+            <li>Steps to reproduce the issue</li>
+        </ul>
+        <p><strong>Note:</strong> We respond to all GitHub issues within 48 business hours.</p>
+    </div>
+
+    <div class="section">
+        <h2>🎯 Feature Requests</h2>
+        <p>We welcome feature suggestions! Please check existing requests first to avoid duplicates. Popular feature requests include:</p>
+        <ul>
+            <li>Volume profile integration</li>
+            <li>Additional technical indicators</li>
+            <li>Custom threshold configuration for signals</li>
+            <li>Export functionality</li>
+        </ul>
+    </div>
+</body>
+</html>
