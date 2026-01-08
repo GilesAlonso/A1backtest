@@ -197,7 +197,23 @@ class OHLCVisualization {
       .style('font-size', '12px');
     
     // Draw candlesticks
-    const candleWidth = Math.max(1, this.chartWidth / data.length / 3);
+    // Calculate candleWidth based on actual spacing between dates
+    let candleWidth = 12; // Default reasonable width
+
+    if (data.length > 1) {
+      // Get pixel distance between first two consecutive dates
+      const xScale = d3.scaleTime()
+        .domain(d3.extent(data, d => d.date))
+        .range([0, this.chartWidth]);
+      
+      const firstDatePixel = xScale(data[0].date);
+      const secondDatePixel = xScale(data[1].date);
+      const pixelsBetweenDates = Math.abs(secondDatePixel - firstDatePixel);
+      
+      // Use 60% of the spacing between dates as the candle width
+      // This leaves 40% as whitespace/gaps
+      candleWidth = Math.max(2, Math.min(25, pixelsBetweenDates * 0.6));
+    }
     
     chartArea.selectAll('.candle')
       .data(data)
