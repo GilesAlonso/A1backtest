@@ -1,41 +1,96 @@
 {
- "name": "App",
- "icons": [
-  {
-   "src": "\/android-icon-36x36.png",
-   "sizes": "36x36",
-   "type": "image\/png",
-   "density": "0.75"
-  },
-  {
-   "src": "\/android-icon-48x48.png",
-   "sizes": "48x48",
-   "type": "image\/png",
-   "density": "1.0"
-  },
-  {
-   "src": "\/android-icon-72x72.png",
-   "sizes": "72x72",
-   "type": "image\/png",
-   "density": "1.5"
-  },
-  {
-   "src": "\/android-icon-96x96.png",
-   "sizes": "96x96",
-   "type": "image\/png",
-   "density": "2.0"
-  },
-  {
-   "src": "\/android-icon-144x144.png",
-   "sizes": "144x144",
-   "type": "image\/png",
-   "density": "3.0"
-  },
-  {
-   "src": "\/android-icon-192x192.png",
-   "sizes": "192x192",
-   "type": "image\/png",
-   "density": "4.0"
-  }
- ]
+  "name": "OHLC EdgeFinder Professional",
+  "organization": "QZZ Analytics",
+  "description": "Professional OHLC candlestick chart with EdgeFinder scoring system. Requires data source containing: Date, Open, High, Low, Close, Score (-10 to 10 scale), and Ticker symbol. Shows bullish arrows when score crosses from below 5 to above 5, and bearish arrows when score crosses from above -5 to below -5. Includes toggleable moving averages (3, 14, 20, 50, 100, 200-day).",
+  "logoUrl": "https://solvethis.qzz.io/A1backtest/images/logo.png",
+  "companyLogoUrl": "https://solvethis.qzz.io/A1backtest/images/company-logo.png",
+  "organizationUrl": "https://solvethis.qzz.io/A1backtest/",
+  "privacyPolicyUrl": "https://solvethis.qzz.io/A1backtest/docs/privacy-policy.html",
+  "termsOfServiceUrl": "https://solvethis.qzz.io/A1backtest/docs/terms-of-service.html",
+  "supportUrl": "https://solvethis.qzz.io/A1backtest/docs/support.html",
+  "docsUrl": "https://solvethis.qzz.io/A1backtest/docs/",
+  "sourceUrl": "https://github.com/solvethis/A1backtest",
+  "packageUrl": "https://lookerstudio.google.com/reporting/YOUR_DEMO_REPORT_ID_HERE",
+  "version": "1.0.0",
+  "defaultTheme": "light",
+  "devMode": false,
+  "components": [
+    {
+      "id": "ohlc-edgefinder-main",
+      "name": "OHLC EdgeFinder Chart",
+      "description": "Interactive candlestick visualization with EdgeFinder scoring system. Displays bullish arrows when score crosses from below 5 to above 5, and bearish arrows when score crosses from above -5 to below -5. Includes configurable moving averages and dark/light themes.",
+      "iconUrl": "https://solvethis.qzz.io/A1backtest/images/component-icon.png",
+      "resource": {
+        "js": "https://solvethis.qzz.io/A1backtest/visualization.js",
+        "css": "https://solvethis.qzz.io/A1backtest/style.css"
+      },
+      "config": {
+        "requiredFields": [
+          { "name": "date", "dataType": ["DATE", "DATETIME"] },
+          { "name": "open", "dataType": ["NUMBER"] },
+          { "name": "high", "dataType": ["NUMBER"] },
+          { "name": "low", "dataType": ["NUMBER"] },
+          { "name": "close", "dataType": ["NUMBER"] },
+          { "name": "ticker", "dataType": ["TEXT"] },
+          { "name": "score", "dataType": ["NUMBER"] }
+        ],
+        "options": [
+          {
+            "id": "theme",
+            "displayName": "Theme",
+            "type": "SELECT_SINGLE",
+            "defaultValue": "light",
+            "allowedValues": [
+              {"value": "light", "label": "Light Theme"},
+              {"value": "dark", "label": "Dark Theme"}
+            ]
+          },
+          {
+            "id": "ma3_enabled",
+            "displayName": "Show 3-Day MA",
+            "type": "CHECKBOX",
+            "defaultValue": true
+          },
+          {
+            "id": "ma14_enabled",
+            "displayName": "Show 14-Day MA",
+            "type": "CHECKBOX",
+            "defaultValue": false
+          },
+          {
+            "id": "ma20_enabled",
+            "displayName": "Show 20-Day MA",
+            "type": "CHECKBOX",
+            "defaultValue": true
+          },
+          {
+            "id": "ma50_enabled",
+            "displayName": "Show 50-Day MA",
+            "type": "CHECKBOX",
+            "defaultValue": true
+          },
+          {
+            "id": "ma100_enabled",
+            "displayName": "Show 100-Day MA",
+            "type": "CHECKBOX",
+            "defaultValue": false
+          },
+          {
+            "id": "ma200_enabled",
+            "displayName": "Show 200-Day MA",
+            "type": "CHECKBOX",
+            "defaultValue": true
+          },
+          {
+            "id": "chartHeight",
+            "displayName": "Chart Height (pixels)",
+            "type": "NUMBER",
+            "defaultValue": 500,
+            "minValue": 300,
+            "maxValue": 1000
+          }
+        ]
+      }
+    }
+  ]
 }
