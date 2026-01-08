@@ -149,28 +149,30 @@ class OHLCVisualization {
     // Get theme colors
     const theme = this.themes[this.currentTheme];
     
-    // Create scales
+    // SINGLE shared X-axis for all elements
     const xScale = d3.scaleTime()
       .domain(d3.extent(data, d => d.date))
       .range([0, this.chartWidth]);
-    
+
+    // LEFT Y-axis: For OHLC prices and moving averages
     const priceDomain = [
       d3.min(data, d => Math.min(d.low, d.ma3 || d.ma14 || d.ma20 || d.ma50 || d.ma100 || d.ma200 || d.low)),
       d3.max(data, d => Math.max(d.high, d.ma3 || d.ma14 || d.ma20 || d.ma50 || d.ma100 || d.ma200 || d.high))
     ];
-    
-    const yScale = d3.scaleLinear()
+
+    const yScalePrice = d3.scaleLinear()
       .domain(priceDomain)
       .range([this.chartHeight, 0]);
-    
-    const scoreScale = d3.scaleLinear()
+
+    // RIGHT Y-axis: For EdgeFinder score only
+    const yScaleScore = d3.scaleLinear()
       .domain([-10, 10])
       .range([this.chartHeight, 0]);
-    
-    // Add grid lines
+
+    // Grid lines (based on price axis)
     chartArea.append('g')
       .attr('class', 'grid')
-      .call(d3.axisLeft(yScale)
+      .call(d3.axisLeft(yScalePrice)
         .ticks(10)
         .tickSize(-this.chartWidth)
         .tickFormat('')
@@ -178,20 +180,44 @@ class OHLCVisualization {
       .selectAll('line')
       .style('stroke', theme.gridColor)
       .style('stroke-opacity', 0.5);
-    
-    // Add axes
+
+    // LEFT Y-axis: Price axis
+    chartArea.append('g')
+      .attr('class', 'axis axis-left')
+      .call(d3.axisLeft(yScalePrice)
+        .tickFormat(d => '\u0024' + d3.format('.2f')(d)))
+      .selectAll('text')
+      .style('fill', theme.textColor)
+      .style('font-size', '12px');
+
+    // RIGHT Y-axis: Score axis
+    chartArea.append('g')
+      .attr('class', 'axis axis-right')
+      .attr('transform', `translate(${this.chartWidth}, 0)`)
+      .call(d3.axisRight(yScaleScore)
+        .ticks(5)
+        .tickFormat(d => d === 0 ? '0' : `${d > 0 ? '+' : ''}${d}`))
+      .selectAll('text')
+      .style('fill', theme.scoreLine)
+      .style('font-size', '12px');
+
+    // Label for right axis
+    chartArea.append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', this.chartWidth + 40)
+      .attr('x', -this.chartHeight / 2)
+      .attr('dy', '1em')
+      .style('text-anchor', 'middle')
+      .style('fill', theme.scoreLine)
+      .style('font-size', '12px')
+      .text('EdgeFinder Score (-10 to +10)');
+
+    // X-axis (bottom)
     chartArea.append('g')
       .attr('transform', `translate(0, ${this.chartHeight})`)
       .call(d3.axisBottom(xScale)
         .tickFormat(d3.timeFormat('%b %d'))
       )
-      .selectAll('text')
-      .style('fill', theme.textColor)
-      .style('font-size', '12px');
-    
-    chartArea.append('g')
-      .call(d3.axisLeft(yScale)
-        .tickFormat(d => `$${d3.format('.2f')(d)}`))
       .selectAll('text')
       .style('fill', theme.textColor)
       .style('font-size', '12px');
@@ -219,10 +245,10 @@ class OHLCVisualization {
       .each(function(d) {
         const candle = d3.select(this);
         const x = xScale(d.date) - candleWidth/2;
-        const yHigh = yScale(d.high);
-        const yLow = yScale(d.low);
-        const yOpen = yScale(d.open);
-        const yClose = yScale(d.close);
+        const yHigh = yScalePrice(d.high);
+        const yLow = yScalePrice(d.low);
+        const yOpen = yScalePrice(d.open);
+        const yClose = yScalePrice(d.close);
         
         // Draw wick
         candle.append('line')
@@ -256,7 +282,7 @@ class OHLCVisualization {
       if (maData.length > 0 && document.getElementById(`ma${period}`)?.checked) {
         const line = d3.line()
           .x(d => xScale(d.date))
-          .y(d => yScale(d.value))
+          .y(d => yScalePrice(d.value))
           .curve(d3.curveMonotoneX);
         
         chartArea.append('path')
@@ -272,9 +298,9 @@ class OHLCVisualization {
     // Draw EdgeFinder score line
     const scoreLine = d3.line()
       .x(d => xScale(d.date))
-      .y(d => yScale(d.score / 10 * (priceDomain[1] - priceDomain[0]) + priceDomain[0]))
+      .y(d => yScaleScore(d.score))
       .curve(d3.curveMonotoneX);
-    
+
     chartArea.append('path')
       .datum(data)
       .attr('fill', 'none')
@@ -288,7 +314,7 @@ class OHLCVisualization {
       if (d.bullishSignal) {
         chartArea.append('path')
           .attr('d', d3.symbol().type(d3.symbolTriangle).size(100))
-          .attr('transform', `translate(${xScale(d.date)}, ${yScale(d.low) + 20}) rotate(180)`)
+          .attr('transform', `translate(${xScale(d.date)}, ${yScalePrice(d.low) + 20}) rotate(180)`)
           .attr('fill', theme.bullishArrow)
           .attr('stroke', theme.bullishArrow);
       }
@@ -296,7 +322,7 @@ class OHLCVisualization {
       if (d.bearishSignal) {
         chartArea.append('path')
           .attr('d', d3.symbol().type(d3.symbolTriangle).size(100))
-          .attr('transform', `translate(${xScale(d.date)}, ${yScale(d.high) - 20})`)
+          .attr('transform', `translate(${xScale(d.date)}, ${yScalePrice(d.high) - 20})`)
           .attr('fill', theme.bearishArrow)
           .attr('stroke', theme.bearishArrow);
       }
