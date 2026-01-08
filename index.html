@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>OHLC EdgeFinder Visualizer</title>
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    #container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    #chart-container {
+      flex: 1;
+      min-height: 400px;
+      position: relative;
+    }
+    #controls {
+      padding: 10px;
+      background: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .ma-toggle {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-right: 15px;
+    }
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .theme-btn {
+      padding: 6px 12px;
+      border: 1px solid #ddd;
+      background: white;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .theme-btn.active {
+      background: #2196F3;
+      color: white;
+      border-color: #2196F3;
+    }
+    .ma-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="controls">
+      <div class="control-group">
+        <span>Theme:</span>
+        <button class="theme-btn active" data-theme="light">Light</button>
+        <button class="theme-btn" data-theme="dark">Dark</button>
+      </div>
+      
+      <div class="control-group">
+        <span>Moving Averages:</span>
+        <label class="ma-toggle">
+          <input type="checkbox" id="ma3" checked>
+          <span class="ma-color" style="background: #FF6B6B;"></span> 3D
+        </label>
+        <label class="ma-toggle">
+          <input type="checkbox" id="ma14">
+          <span class="ma-color" style="background: #4ECDC4;"></span> 14D
+        </label>
+        <label class="ma-toggle">
+          <input type="checkbox" id="ma20" checked>
+          <span class="ma-color" style="background: #45B7D1;"></span> 20D
+        </label>
+        <label class="ma-toggle">
+          <input type="checkbox" id="ma50" checked>
+          <span class="ma-color" style="background: #96CEB4;"></span> 50D
+        </label>
+        <label class="ma-toggle">
+          <input type="checkbox" id="ma100">
+          <span class="ma-color" style="background: #FECA57;"></span> 100D
+        </label>
+        <label class="ma-toggle">
+          <input type="checkbox" id="ma200" checked>
+          <span class="ma-color" style="background: #FF9FF3;"></span> 200D
+        </label>
+      </div>
+    </div>
+    <div id="chart-container"></div>
+  </div>
+
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <script>
+    google.charts.load('current', {'packages':['corechart']});
+    
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // Theme toggle functionality
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          const theme = this.getAttribute('data-theme');
+          applyTheme(theme);
+          redrawChart();
+        });
+      });
+      
+      // MA toggle functionality
+      document.querySelectorAll('input[type="checkbox"][id^="ma"]').forEach(checkbox => {
+        checkbox.addEventListener('change', redrawChart);
+      });
+      
+      // Initial draw
+      drawInitialChart();
+    });
+    
+    function drawInitialChart() {
+      // This will be replaced by the Looker Studio data
+      const sampleData = [
+        {date: new Date('2024-01-01'), open: 100, high: 105, low: 98, close: 103, score: 3},
+        {date: new Date('2024-01-02'), open: 103, high: 108, low: 102, close: 107, score: 6},
+        {date: new Date('2024-01-03'), open: 107, high: 110, low: 105, close: 106, score: -3},
+        {date: new Date('2024-01-04'), open: 106, high: 109, low: 104, close: 108, score: -6},
+        {date: new Date('2024-01-05'), open: 108, high: 112, low: 107, close: 111, score: 4},
+        {date: new Date('2024-01-06'), open: 111, high: 115, low: 110, close: 114, score: 7},
+        {date: new Date('2024-01-07'), open: 114, high: 116, low: 112, close: 113, score: -2},
+        {date: new Date('2024-01-08'), open: 113, high: 118, low: 112, close: 117, score: -7}
+      ];
+      
+      renderChart(sampleData);
+    }
+    
+    function redrawChart() {
+      // In real implementation, this would fetch data from Looker Studio
+      drawInitialChart();
+    }
+    
+    function applyTheme(theme) {
+      document.documentElement.style.setProperty('--bg-color', theme === 'dark' ? '#1e1e1e' : '#ffffff');
+      document.documentElement.style.setProperty('--text-color', theme === 'dark' ? '#ffffff' : '#333333');
+      document.documentElement.style.setProperty('--grid-color', theme === 'dark' ? '#444444' : '#e0e0e0');
+      document.documentElement.style.setProperty('--panel-bg', theme === 'dark' ? '#2d2d2d' : '#f5f5f5');
+      
+      document.body.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-color');
+      document.body.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color');
+    }
+    
+    // Initial theme setup
+    applyTheme('light');
+  </script>
+  <script src="visualization.js"></script>
+</body>
+</html>
